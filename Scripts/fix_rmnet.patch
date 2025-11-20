@@ -1,0 +1,39 @@
+From 918c04d39de424fa598add1944643d312bda8258 Mon Sep 17 00:00:00 2001
+From: Yuki Sena <admin@senayuki.moe>
+Date: Thu, 30 Oct 2025 17:45:11 +0800
+Subject: [PATCH] process dependency between RMNET and WWAN
+
+Signed-off-by: Yuki Sena <admin@senayuki.moe>
+---
+ qca-nss-drv/Config.in | 2 +-
+ qca-nss-ecm/Makefile  | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/qca-nss-drv/Config.in b/qca-nss-drv/Config.in
+index 6b9cf85..9c51641 100644
+--- a/qca-nss-drv/Config.in
++++ b/qca-nss-drv/Config.in
+@@ -177,7 +177,7 @@ config NSS_DRV_QVPN_ENABLE
+ 
+ config NSS_DRV_RMNET_ENABLE
+ 	bool
+-	default n
++    default y if PACKAGE_kmod-qmi_wwan_q
+ 	prompt "Enable RMNET"
+ 	depends on TARGET_qualcommax_ipq807x || TARGET_qualcommax_ipq50xx
+ 
+diff --git a/qca-nss-ecm/Makefile b/qca-nss-ecm/Makefile
+index d7cba36..af9e609 100644
+--- a/qca-nss-ecm/Makefile
++++ b/qca-nss-ecm/Makefile
+@@ -165,8 +165,10 @@ ECM_MAKE_OPTS+=ECM_INTERFACE_BOND_ENABLE=y
+ endif
+ 
+ ifneq ($(CONFIG_PACKAGE_kmod-qmi_wwan_q),)
++ifneq (, $(findstring $(CONFIG_TARGET_SUBTARGET), "ipq807x" "ipq50xx"))
+ ECM_MAKE_OPTS+=ECM_INTERFACE_RAWIP_ENABLE=y
+ endif
++endif
+ 
+ ifneq ($(CONFIG_NSS_FIRMWARE_VERSION_12_5),)
+ EXTRA_CFLAGS+=-DNSS_FIRMWARE_VERSION_12_5
